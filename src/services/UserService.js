@@ -1,34 +1,34 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const User = require('../models/User')
+const jwt = require('jsonwebtoken')
 
 class UserService {
 
   static async register(userData) {
 
-    const existingUser = await User.findByEmail(userData.email);
+    const existingUser = await User.findByEmail(userData.email)
     if (existingUser) {
-      throw new Error('Email already exists');
+      throw new Error('Email already exists')
     }
 
     const validRoles = ['admin', 'user'];
-    const role = validRoles.includes(userData.role) ? userData.role : 'user';
+    const role = validRoles.includes(userData.role) ? userData.role : 'user'
 
-    return await User.create({ ...userData, role });
+    return await User.create({ ...userData, role })
   }
 
   static async login(email, password) {
-    const user = await User.findByEmail(email);
+    const user = await User.findByEmail(email)
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('User not found')
     }
 
-    const isPasswordValid = await User.checkPassword(password, user.password);
+    const isPasswordValid = await User.checkPassword(password, user.password)
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new Error('Invalid password')
     }
 
     if (!user.is_active) {
-      throw new Error('User is blocked');
+      throw new Error('User is blocked')
     }
 
     const token = jwt.sign(
@@ -37,42 +37,42 @@ class UserService {
       { expiresIn: '7d' }
     );
 
-    return { user, token };
+    return { user, token }
   }
 
   static async getUserById(userId, currentUser) {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('User not found')
     }
 
     if (currentUser.role !== 'admin' && currentUser.userId !== parseInt(userId)) {
-      throw new Error('Access denied');
+      throw new Error('Access denied')
     }
 
-    return user;
+    return user
   }
 
   static async getAllUsers(currentUser) {
     if (currentUser.role !== 'admin') {
-      throw new Error('Admin access required');
+      throw new Error('Admin access required')
     }
 
-    return await User.findAll();
+    return await User.findAll()
   }
 
   static async blockUser(userId, currentUser) {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('User not found')
     }
 
     if (currentUser.role !== 'admin' && currentUser.userId !== parseInt(userId)) {
-      throw new Error('Access denied');
+      throw new Error('Access denied')
     }
 
-    return await User.update(userId, { is_active: false });
+    return await User.update(userId, { is_active: false })
   }
 }
 
-module.exports = UserService;
+module.exports = UserService

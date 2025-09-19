@@ -1,5 +1,5 @@
-const { pool } = require('./database');
-require('dotenv').config();
+const { pool } = require('./database')
+require('dotenv').config()
 
 const initDatabase = async () => {
   try {
@@ -19,10 +19,10 @@ const initDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
       CREATE INDEX IF NOT EXISTS idx_users_is_active ON users(is_active);
-    `;
+    `
 
-    await pool.query(createTableQuery);
-    console.log('Database tables created successfully');
+    await pool.query(createTableQuery)
+    console.log('Database tables created successfully')
 
     const createTriggerQuery = `
       CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -38,16 +38,16 @@ const initDatabase = async () => {
         BEFORE UPDATE ON users
         FOR EACH ROW
         EXECUTE FUNCTION update_updated_at_column();
-    `;
+    `
 
-    await pool.query(createTriggerQuery);
-    console.log('Database triggers created successfully');
+    await pool.query(createTriggerQuery)
+    console.log('Database triggers created successfully')
 
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error('Error initializing database:', error)
   } finally {
-    await pool.end();
+    await pool.end()
   }
 };
 
-initDatabase();
+initDatabase()
