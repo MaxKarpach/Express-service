@@ -24,12 +24,6 @@ class User {
     return result.rows[0];
   }
 
-  static async findByEmail(email) {
-    const query = 'SELECT * FROM users WHERE email = $1';
-    const result = await db.query(query, [email]);
-    return result.rows[0];
-  }
-
   static async findById(id) {
     const query = `
       SELECT id, full_name, date_of_birth, email, role, is_active, created_at, updated_at
